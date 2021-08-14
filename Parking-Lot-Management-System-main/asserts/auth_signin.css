@@ -1,0 +1,21 @@
+html,
+body {
+  height: 100%;
+}
+
+.auth_sigin_page {
+  height: 100%;
+  background-image: url(./images/parking_PNG81.png);
+  background-size: 50% 70%;
+  background-repeat: no-repeat;
+  background-position: center;
+  /* -webkit-filter: blur(3px); */
+}
+
+.sigin-box {
+  width: 600px;
+  align-self: center;
+  backdrop-filter: blur(5px);
+ 
+}
+

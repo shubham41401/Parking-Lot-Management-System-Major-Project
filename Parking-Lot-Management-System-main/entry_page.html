@@ -1,0 +1,297 @@
+<html lang="en"><head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="https://fonts.googleapis.com/css?family=Roboto&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+
+    <title>Parking Lot</title>
+    <style type="text/css">
+    	*{
+    font-family: 'Roboto', sans-serif;
+    padding:0;
+    margin:0;
+    border:0
+}
+header{
+    background-color: #0a3d53;
+}
+#header-logo{
+    width:64px;
+    height:64px;
+}
+#header-msg{
+    font-size: 25px;
+    color: white;
+}
+#btnOne{
+
+    color:black;
+}
+#btnOne:focus,#btnOne:hover{
+    box-shadow: none;
+    outline:none;
+}
+
+#tableHead{
+    background-color:rgb(25, 120, 197);
+}
+#searchInput{
+    height: calc(1.5em + .75rem + 2px);
+    padding: .375rem .75rem;
+    border-bottom: 1px solid #ced4da;
+}
+#searchInput:hover,#searchInput:focus{
+    box-shadow: none;
+    outline:none;
+}
+#entryform{
+    text-decoration: white;
+}
+
+    </style>
+</head>
+
+<body style="background-color:black">
+    <header class="shadow">
+        <div class="header-content d-flex justify-content-center p-2">
+            <img src="parking.svg" alt="" id="header-logo">
+            <h1 class="text-center text-light">Parking Lot Management</h1>
+            <div id="header-msg" class="ml-5 align-self-center"></div>
+        </div>
+    </header>
+    <div class="form-container mt-5  p-2" style="background-image: url(./asserts/images/a.jpg); background-repeat: no-repeat;background-size: 100% 100%;">
+        <form class="w-50 mx-auto" id="entryForm"  >
+            <h5 class="text-center  p-2 text-light" style="background-color:  #002147 ;" >Add Car to Parking Lot</h5>
+            <div class="form-group">
+                <label for="owner" class="text-light font-weight-bold">Owner:</label>
+                <input type="text" class="form-control rounded-0 shadow-sm" id="owner" placeholder="Owner">
+            </div>
+            <div class="form-group">
+                <label for="car" class="text-light font-weight-bold">Car:</label>
+                <input type="text" class="form-control rounded-0 shadow-sm" id="car" placeholder="Car">
+            </div>
+            <div class="form-group">
+                <label for="licensePlate" class="text-light font-weight-bold">License Plate:</label>
+                <input type="text" class="form-control rounded-0 shadow-sm" id="licensePlate" placeholder="NN-NN-LL,NN-LL-NN,....etc">
+            </div>
+            <div class="d-flex justify-content-center">
+                <div>
+                    <label for="entryDate" class="text-light font-weight-bold">Entry Date:</label>
+                    <input type="date" class="form-control rounded-0 shadow-sm" id="entryDate">
+                    <label for="entrytime" class="text-light font-weight-bold">Entry Time:</label>
+                    <input type="time" class="form-control rounded-0 shadow-sm" id="entrytime">
+                </div>
+                <div>
+                    <label for="exitDate" class="text-light font-weight-bold">Exit Date:</label>
+                    <input type="date" class="form-control rounded-0 shadow-sm" id="exitDate">
+                    <label for="exittime" class="text-light font-weight-bold">Exit Time:</label>
+                    <input type="time" class="form-control rounded-0 shadow-sm" id="exittime">
+                </div>
+            </div>
+            <button type="submit" class="btn btn-success mx-auto d-block mt-5 rounded-0 shadow" id="btnOne">Add Car</button>
+            
+        </form>
+    </div>
+    <div class="table-container mt-5 mb-5 w-75 mx-auto " style="background-color: whitesmoke;">
+            <h5 class="text-center mb-3  p-2 text-light" style="background-color: #0a3d53;">List of Cars in Parking Lot</h5>
+            <input type="text" class="w-100 mb-3" id="searchInput" placeholder="Search...">
+            <table class="table table-striped shadow  " id="parkingTable">
+                    <thead class="text-white" style="background-color:  #002147 ;" id="tableHead">
+                      <tr>
+                        <th scope="col">Owner</th>
+                        <th scope="col">Car</th>
+                        <th scope="col">License Plate</th>
+                        <th scope="col">Entry Date</th>
+                        <th scope="col">Exit Date</th>
+                        <th scope="col">Entry Time</th>
+                        <th scope="col">Exit Time</th>
+                        <th scope="col">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody id="tableBody">
+
+                    </tbody>
+                  </table>
+    </div>
+
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script>
+    	//Entry Class: Represent each entry in the parking lot
+class Entry{
+    constructor(owner,car,licensePlate,entryDate,exitDate,entrytime, exittime){
+        this.owner = owner;
+        this.car = car;
+        this.licensePlate = licensePlate;
+        this.entryDate = entryDate;
+        this.exitDate = exitDate;
+        this.entrytime = entrytime;
+        this.exittime = exittime;
+    }
+}
+//UI Class: Handle User Interface Tasks
+class UI{
+    static displayEntries(){
+
+        const entries = Store.getEntries();
+        entries.forEach((entry) => UI.addEntryToTable(entry));
+    }
+    static addEntryToTable(entry){
+        const tableBody=document.querySelector('#tableBody');
+        const row = document.createElement('tr');
+        row.innerHTML = `   <td>${entry.owner}</td>
+                            <td>${entry.car}</td>
+                            <td>${entry.licensePlate}</td>
+                            <td>${entry.entryDate}</td>
+                            <td>${entry.exitDate}</td>
+                            <td>${entry.entrytime}</td>
+                            <td>${entry.exittime}</td>
+                            <td><button class="btn btn-danger delete">X</button></td>
+                        `;
+        tableBody.appendChild(row);
+    }
+    static clearInput(){
+        //Selects all the inputs
+        const inputs = document.querySelectorAll('.form-control');
+        //Clear the content of each input
+        inputs.forEach((input)=>input.value="");
+    }
+    static deleteEntry(target){
+        if(target.classList.contains('delete')){
+            target.parentElement.parentElement.remove();
+        }
+    }
+    static showAlert(message,className){
+        const div = document.createElement('div');
+        div.className=`alert alert-${className} w-50 mx-auto`;
+        div.appendChild(document.createTextNode(message));
+        const formContainer = document.querySelector('.form-container');
+        const form = document.querySelector('#entryForm');
+        formContainer.insertBefore(div,form);
+        setTimeout(() => document.querySelector('.alert').remove(),3000);
+    }
+    static validateInputs(){
+        const owner = document.querySelector('#owner').value;
+        const car = document.querySelector('#car').value;
+        const licensePlate = document.querySelector('#licensePlate').value;
+        const entryDate = document.querySelector('#entryDate').value;
+        const exitDate = document.querySelector('#exitDate').value;
+        const entrytime = document.querySelector('#entrytime').value;
+        const exittime = document.querySelector('#exittime').value;
+        var licensePlateRegex = /^(?:[A-Z]{2}-\d{2}-\d{2})|(?:\d{2}-[A-Z]{2}-\d{2})|(?:\d{2}-\d{2}-[A-Z]{2})$/;
+        if(owner === '' || car === '' || licensePlate === '' || entryDate === '' || exitDate === '' || exittime === '' || entrytime === ''){
+            UI.showAlert('All fields must me filled!','danger');
+            return false;
+        }
+        if(exitDate < entryDate){
+            UI.showAlert('Exit Date cannot be lower than Entry Date','danger');
+            return false;
+        }
+
+        if(exittime < entrytime){
+            UI.showAlert('Exit Time cannot be lower than Entry Time','danger');
+            return false;
+        }
+        
+
+        return true;
+    }
+}
+//Store Class: Handle Local Storage
+class Store{
+    static getEntries(){
+        let entries;
+        if(localStorage.getItem('entries') === null){
+            entries = [];
+        }
+        else{
+            entries = JSON.parse(localStorage.getItem('entries'));
+        }
+        return entries;
+    }
+    static addEntries(entry){
+        const entries = Store.getEntries();
+        entries.push(entry);
+        localStorage.setItem('entries', JSON.stringify(entries));
+    }
+    static removeEntries(licensePlate){
+        const entries = Store.getEntries();
+        entries.forEach((entry,index) => {
+            if(entry.licensePlate === licensePlate){
+                entries.splice(index, 1);
+            }
+        });
+        localStorage.setItem('entries', JSON.stringify(entries));
+    }
+}
+//Event Display
+    document.addEventListener('DOMContentLoaded',UI.displayEntries);
+//Event Add
+    document.querySelector('#entryForm').addEventListener('submit',(e)=>{
+        e.preventDefault();
+
+        //Declare Variables
+        const owner = document.querySelector('#owner').value;
+        const car = document.querySelector('#car').value;
+        const licensePlate = document.querySelector('#licensePlate').value;
+        const entryDate = document.querySelector('#entryDate').value;
+        const exitDate = document.querySelector('#exitDate').value;
+        const entrytime = document.querySelector('#entrytime').value;
+        const exittime = document.querySelector('#exittime').value;
+        if(!UI.validateInputs()){
+            return;
+        }
+        //Instatiate Entry
+        const entry = new Entry(owner, car, licensePlate, entryDate, exitDate, entrytime, exittime);
+        //Add the entry do de UI table
+        UI.addEntryToTable(entry);
+        Store.addEntries(entry);
+        //Delete content of input's
+        UI.clearInput();
+
+        UI.showAlert('Car successfully added to the parking lot','success');
+
+    });
+//Event Remove
+    document.querySelector('#tableBody').addEventListener('click',(e)=>{
+        //Call to UI function that removes entry from the table
+        UI.deleteEntry(e.target);
+        //Get license plate to use as unique element of an entry
+        var licensePlate = e.target.parentElement.previousElementSibling.previousElementSibling.previousElementSibling.textContent;
+        //Call to Store function to remove entry from the local storage
+        Store.removeEntries(licensePlate);
+        //Show alert that entry was removed
+        UI.showAlert('Car successfully removed from the parking lot list','success');
+    })
+
+//Event Search
+    document.querySelector('#searchInput').addEventListener('keyup', function searchTable(){
+        //Get value of the input search
+        const searchValue = document.querySelector('#searchInput').value.toUpperCase();
+        //Get all lines of table body
+        const tableLine = (document.querySelector('#tableBody')).querySelectorAll('tr');
+        //for loop #1 (used to pass all the lines)
+        for(let i = 0; i < tableLine.length; i++){
+            var count = 0;
+            //Get all collumns of each line
+            const lineValues = tableLine[i].querySelectorAll('td');
+            //for loop #2 (used to pass all the collumns)
+            for(let j = 0; j < lineValues.length - 1; j++){
+                //Check if any collumn of the line starts with the input search string
+                if((lineValues[j].innerHTML.toUpperCase()).startsWith(searchValue)){
+                    count++;
+                }
+            }
+            if(count > 0){
+                //If any collumn contains the search value the display block
+                tableLine[i].style.display = '';
+            }else{
+                //Else display none 
+                tableLine[i].style.display = 'none';
+            }
+        }
+    });
+    </script>
+
+
+</body></html> 
